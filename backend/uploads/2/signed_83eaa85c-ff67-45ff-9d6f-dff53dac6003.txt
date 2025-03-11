@@ -1,0 +1,2 @@
+signed by authority
+print("Hello world")
