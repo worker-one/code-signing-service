@@ -149,17 +149,6 @@ const AdminPanel = (() => {
         signingPages.forEach(page => {
             console.log('Rendering page:', page);
             const row = document.createElement('tr');
-            // row.innerHTML = `
-            //     <td>${page.title}</td>
-            //     <td>${page.userUsername || 'N/A'}</td>
-            //     <td>${page.accountName || 'N/A'}</td>
-            //     <td>${page.createdAt}</td>
-            //     <td>
-            //         <button class="btn btn-sm btn-primary edit-page" data-id="${page.id}">Edit</button>
-            //         <button class="btn btn-sm btn-danger delete-page" data-id="${page.id}">Delete</button>
-            //         <button class="btn btn-sm btn-secondary view-page" data-id="${page.id}">View</button>
-            //     </td>
-            // `;
             row.innerHTML = `
                 <td>${page.title}</td>
                 <td>${page.accountName || 'N/A'}</td>
@@ -197,6 +186,7 @@ const AdminPanel = (() => {
                 user_id: userId,
                 username: pageData.userUsername,
                 page_url: pageData.title || pageData.pageAddress,
+                account_uri: pageData.accountUri, // Add account_uri
                 azure_account_name: pageData.accountName,
                 azure_certificate_name: pageData.certificateName,
                 azure_tenant_id: pageData.tenantId,
@@ -274,6 +264,7 @@ const AdminPanel = (() => {
                     clientSecret: formData.get('clientSecret'),
                     accountName: formData.get('accountName'),
                     certificateName: formData.get('certificateName'),
+                    accountUri: formData.get('accountUri'), // Get accountUri from form
                     additionalCredentials: formData.get('additionalCredentials'),
                     userUsername: formData.get('userUsername'),
                     userPassword: formData.get('userPassword'),

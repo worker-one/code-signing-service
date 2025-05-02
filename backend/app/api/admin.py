@@ -20,6 +20,7 @@ class PageCreate(BaseModel):
     username: str
     user_id: int
     page_url: str
+    account_uri: str
     azure_account_name: str
     azure_certificate_name: str
     azure_tenant_id: str
@@ -28,6 +29,7 @@ class PageCreate(BaseModel):
 
 class PageUpdate(BaseModel):
     page_url: str = None
+    account_uri: str = None
     azure_account_name: str = None
     azure_certificate_name: str = None
     azure_tenant_id: str = None
@@ -39,6 +41,7 @@ class PageResponse(BaseModel):
     page_url: str
     azure_account_name: str
     azure_certificate_name: str = None
+    account_uri: str
     azure_tenant_id: str
     azure_client_id: str
     created_at: datetime
@@ -117,6 +120,7 @@ def create_page(
         username=page_data.username,
         page_url=page_data.page_url,
         azure_account_name=page_data.azure_account_name,
+        account_uri=page_data.account_uri,
         azure_certificate_name=page_data.azure_certificate_name,
         azure_tenant_id=page_data.azure_tenant_id,
         azure_client_id=page_data.azure_client_id,
@@ -198,6 +202,9 @@ def update_page(
         
     if page_data.azure_client_secret:
         page.azure_client_secret = page_data.azure_client_secret
+    
+    if page_data.account_uri:
+        page.account_uri = page_data.account_uri
     
     db.commit()
     db.refresh(page)
