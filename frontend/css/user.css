@@ -1,0 +1,144 @@
+/* User Page Layout */
+.user-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--dark-color);
+    color: white;
+    padding: 15px 30px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.user-header .logo h1 {
+    font-size: 1.4em;
+    margin: 0;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-container {
+    padding: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.user-content {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: var(--box-shadow);
+    padding: 30px;
+}
+
+/* Upload Section */
+.upload-section {
+    margin-bottom: 40px;
+}
+
+.drop-area {
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 40px 20px;
+    text-align: center;
+    transition: all 0.3s;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.drop-area.highlight {
+    border-color: var(--primary-color);
+    background-color: rgba(52, 152, 219, 0.05);
+}
+
+.upload-icon {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 15px;
+}
+
+.file-input-label {
+    display: inline-block;
+    padding: 8px 15px;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 10px;
+}
+
+.file-input-label:hover {
+    background-color: var(--primary-dark);
+}
+
+.file-info {
+    margin: 15px 0;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: var(--border-radius);
+}
+
+/* Progress Bar */
+.progress-section {
+    margin: 30px 0;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.progress-container {
+    margin-top: 15px;
+}
+
+.progress-bar {
+    height: 20px;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.progress {
+    height: 100%;
+    background-color: var(--primary-color);
+    width: 0;
+    transition: width 0.3s ease;
+}
+
+.progress-status {
+    font-size: 0.9em;
+    color: #666;
+}
+
+.signed-file-container {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #e8f7ef;
+    border-radius: var(--border-radius);
+    text-align: center;
+}
+
+/* History Section */
+.history-section {
+    margin-top: 40px;
+}
+
+.history-table-container {
+    margin-top: 20px;
+    overflow-x: auto;
+}
+
+.status-pending {
+    color: var(--warning-color);
+}
+
+.status-completed {
+    color: var(--secondary-color);
+}
+
+.status-failed {
+    color: var(--danger-color);
+}

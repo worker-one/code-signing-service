@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Code Signing Service</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+    <div id="admin-container" class="admin-container" style="display: none;">
+        <nav class="admin-nav">
+            <div class="logo">
+                <h1>Code Signing Admin</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">Dashboard</a></li>
+                <li><a href="create-page.html">Create User Page</a></li>
+                <li><a href="manage-page.html">Manage Pages</a></li>
+                <li><a href="#" id="logoutBtn">Logout</a></li>
+            </ul>
+        </nav>
+
+        <main class="admin-content">
+            <h2>Admin Dashboard</h2>
+            <div class="dashboard-cards">
+                <div class="card">
+                    <h3>User Pages</h3>
+                    <p class="count" id="pagesCount">0</p>
+                    <a href="manage-page.html" class="btn">View All</a>
+                </div>
+                <div class="card">
+                    <h3>Signed Files</h3>
+                    <p class="count" id="filesCount">0</p>
+                </div>
+                <div class="card">
+                    <h3>Quick Actions</h3>
+                    <a href="create-page.html" class="btn btn-primary">Create New Page</a>
+                </div>
+            </div>
+
+            <div class="recent-activity">
+                <h3>Recent Activity</h3>
+                <div class="activity-table-container">
+                    <table class="activity-table">
+                        <thead>
+                            <tr>
+                                <th>Activity</th>
+                                <th>User Page</th>
+                                <th>Date Time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="activityTableBody">
+                            <!-- Activity data will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="../js/api-service.mjs"></script>  <!-- Load FIRST -->
+    <script src="../js/auth.js"></script>
+    <script src="../js/admin.js"></script>
+</body>
+</html>

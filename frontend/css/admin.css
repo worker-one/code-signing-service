@@ -1,0 +1,144 @@
+/* Admin Layout */
+.admin-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.admin-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--dark-color);
+    color: white;
+    padding: 0 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.admin-nav .logo h1 {
+    font-size: 1.4em;
+    margin: 0;
+    padding: 15px 0;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+}
+
+.nav-links li a {
+    display: block;
+    color: white;
+    padding: 15px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.nav-links li a:hover, 
+.nav-links li a.active {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.admin-content {
+    flex: 1;
+    padding: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Dashboard Cards */
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: var(--box-shadow);
+    padding: 20px;
+}
+
+.card h3 {
+    margin-bottom: 15px;
+    color: var(--dark-color);
+}
+
+.card .count {
+    font-size: 2.5em;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+/* Tables */
+.activity-table-container,
+.pages-table-container {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: var(--box-shadow);
+    overflow: hidden;
+    margin-top: 20px;
+}
+
+.activity-table th,
+.pages-table th {
+    background-color: #f5f7fa;
+    color: var(--dark-color);
+}
+
+/* Form Container */
+.form-container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: var(--box-shadow);
+}
+
+/* Search Container */
+.search-container {
+    margin-bottom: 20px;
+}
+
+.search-container input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    font-size: 1em;
+}
+
+.search-container input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+/* Action Buttons in Tables */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+/* Recent Activity Styling */
+.recent-activity {
+    margin-top: 40px;
+}
+
+.recent-activity h3 {
+    margin-bottom: 15px;
+}
+
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}

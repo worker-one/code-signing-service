@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create User Page - Code Signing Service</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+    <div id="admin-container" class="admin-container" style="display: none;">
+        <nav class="admin-nav">
+            <div class="logo">
+                <h1>Code Signing Admin</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Dashboard</a></li>
+                <li><a href="create-page.html" class="active">Create User Page</a></li>
+                <li><a href="manage-page.html">Manage Pages</a></li>
+                <li><a href="#" id="logoutBtn">Logout</a></li>
+            </ul>
+        </nav>
+
+        <main class="admin-content">
+            <h2>Create New User Page</h2>
+            <div id="notification" class="alert hidden"></div>
+            <div class="form-container">
+                <form id="createPageForm">
+                    <div class="form-section">
+                        <h3>Azure Trusted Signing Account Credentials</h3>
+                        <div class="form-group">
+                            <label for="accountName">tenant ID</label>
+                            <input type="text" id="tenantId" name="tenantId" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="accountName">Client ID</label>
+                            <input type="text" id="clientId" name="clientId" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="accountName">Client Secret</label>
+                            <input type="password" id="clientSecret" name="clientSecret" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="accountName">Account Name</label>
+                            <input type="text" id="accountName" name="accountName" value="AccountName1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="certificateName">Certificate Name</label>
+                            <input type="text" id="certificateName" name="certificateName" value="Certificate1" required>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>User Access Credentials</h3>
+                        <div class="form-group">
+                            <label for="userUsername">Username</label>
+                            <input type="text" id="userUsername" name="userUsername" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="userPassword">Password</label>
+                            <input type="password" id="userPassword" name="userPassword" required>
+                            <button type="button" class="btn btn-small" id="generatePasswordBtn">Generate Strong Password</button>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Page Configuration</h3>
+                        <div class="form-group">
+                            <label for="pageAddress">Page Address (URL)</label>
+                            <input type="text" id="pageAddress" name="pageAddress" placeholder="Will default to Account Name if left blank">
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Create User Page</button>
+                        <button type="reset" class="btn">Reset Form</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/auth.js"></script>
+    <script src="../js/api-service.mjs"></script>
+    <script src="../js/admin.js"></script>
+</body>
+</html>

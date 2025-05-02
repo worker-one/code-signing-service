@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Signing - User Page</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/user.css">
+    <style>
+        .note-top {
+            background-color: #f0f0f0;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    
+    <header class="user-header">
+        <div class="logo">
+            <h1>Code Signing Service</h1>
+        </div>
+        <div class="user-info">
+            <span id="username">User</span>
+            <button id="logoutBtn" class="btn btn-small">Logout</button>
+        </div>
+    </header>
+    <div class="note-top">
+        <p>Note: Uploaded files will be deleted in 3 days</p>
+    </div>
+    <div class="user-container">
+        <main class="user-content">
+            <section class="upload-section">
+                <h2>Sign Your Code</h2>
+                <div class="upload-container">
+                    <form id="uploadForm">
+                        <div class="drop-area" id="dropArea">
+                            <div class="drop-message">
+                                <p>Drag and drop your file here or</p>
+                                <label for="fileInput" class="file-input-label">Browse Files</label>
+                                <input type="file" id="fileInput" name="file" hidden>
+                            </div>
+                        </div>
+                        <div class="file-info" id="fileInfo">
+                            <p>No file selected</p>
+                        </div>
+                        <button type="submit" id="signButton" class="btn btn-primary" disabled>Sign File</button>
+                    </form>
+                </div>
+            </section>
+
+            <section class="progress-section" id="progressSection" style="display: none;">
+                <h3>Signing Progress</h3>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress" id="progressBar"></div>
+                    </div>
+                    <p class="progress-status" id="progressStatus">Uploading file...</p>
+                </div>
+                <div class="signed-file-container" id="signedFileContainer" style="display: none;">
+                    <p>Your file has been successfully signed!</p>
+                    <a href="#" id="downloadLink" class="btn btn-primary">Download Signed File</a>
+                </div>
+            </section>
+
+            <section class="history-section">
+                <h2>File History</h2>
+                <div class="history-table-container">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>File Name</th>
+                                <th>Upload Date</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <!-- History data will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="../js/auth.js"></script>
+    <script src="../js/user.js"></script>
+</body>
+</html>

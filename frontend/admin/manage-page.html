@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Pages - Code Signing Service</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+    <div id="admin-container" class="admin-container" style="display: none;">
+        <nav class="admin-nav">
+            <div class="logo">
+                <h1>Code Signing Admin</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Dashboard</a></li>
+                <li><a href="create-page.html">Create User Page</a></li>
+                <li><a href="manage-page.html" class="active">Manage Pages</a></li>
+                <li><a href="#" id="logoutBtn">Logout</a></li>
+            </ul>
+        </nav>
+
+        <main class="admin-content">
+            <h2>Manage User Pages</h2>
+            <div class="search-container">
+                <input type="text" id="pageSearchInput" placeholder="Search pages...">
+            </div>
+
+            <div class="signing-pages-list">
+                <table class="pages-table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Azure Account Name</th>
+                            <th>Certificate Name</th>
+                            <th>Created On</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pagesTableBody">
+                        <!-- Page data will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Edit Page Modal -->
+    <div id="editPageModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Edit User Page</h2>
+            <form id="editPageForm">
+                <input type="hidden" id="editPageId">
+                
+                <div class="form-section">
+                    <h3>Azure Trusted Signing Account Credentials</h3>
+                    <div class="form-group">
+                        <label for="editaccountName">Account URI</label>
+                        <input type="text" id="editaccountName" name="accountName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editcertificateName">Account Key</label>
+                        <input type="password" id="editcertificateName" name="certificateName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editAdditionalCredentials">Additional Credentials (JSON)</label>
+                        <textarea id="editAdditionalCredentials" name="additionalCredentials" rows="4"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>User Access Credentials</h3>
+                    <div class="form-group">
+                        <label for="editUserUsername">Username</label>
+                        <input type="text" id="editUserUsername" name="userUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editUserPassword">Password</label>
+                        <input type="password" id="editUserPassword" name="userPassword" placeholder="Leave blank to keep current password">
+                        <button type="button" class="btn btn-small" id="editGeneratePasswordBtn">Generate Strong Password</button>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Page Configuration</h3>
+                    <div class="form-group">
+                        <label for="editPageAddress">Page Address (URL)</label>
+                        <input type="text" id="editPageAddress" name="pageAddress">
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="button" class="btn btn-cancel" id="cancelEditBtn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/auth.js"></script>
+    <script src="../js/api-service.mjs"></script>
+    <script src="../js/admin.js"></script>
+</body>
+</html>
