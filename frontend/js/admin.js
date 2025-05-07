@@ -174,7 +174,7 @@ const AdminPanel = (() => {
                 const userResponse = await apiService.admin.createUser({
                     username: pageData.userUsername,
                     password: pageData.userPassword,
-                    role: "USER"
+                    role: "user"
                 });
 
                 // Assuming the API returns the created user's ID
