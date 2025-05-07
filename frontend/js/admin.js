@@ -109,14 +109,20 @@ const AdminPanel = (() => {
             const response = await apiService.admin.getPages();
             console.log('API response:', response);
             
-            signingPages = response.map(page => ({
-                id: page.id,
-                title: page.username,
-                accountName: page.azure_account_name,
-                certificateName: page.azure_certificate_name,
-                createdAt: page.created_at,
-                status: 'Active' // Status not in API response, defaulting to Active
-            }));
+            signingPages = response.map(page => {
+                // Format the date to show only year, month, and day
+                const createdDate = new Date(page.created_at);
+                const formattedDate = createdDate.toISOString().split('T')[0]; // Gets YYYY-MM-DD format
+                
+                return {
+                    id: page.id,
+                    title: page.username,
+                    accountName: page.azure_account_name,
+                    certificateName: page.azure_certificate_name,
+                    createdAt: formattedDate,
+                    status: 'Active' // Status not in API response, defaulting to Active
+                };
+            });
             console.log('Transformed signing pages:', signingPages);
             
             renderSigningPages();
@@ -182,10 +188,13 @@ const AdminPanel = (() => {
             }
 
             // Prepare the signing page data
+            // Generate a random suffix for the page URL
+            const randomSuffix = Math.random().toString(36).substring(2, 8);
+            
             const apiPageData = {
                 user_id: userId,
                 username: pageData.userUsername,
-                page_url: pageData.title || pageData.pageAddress,
+                page_url: `${pageData.title}-${randomSuffix}`,
                 account_uri: pageData.accountUri, // Add account_uri
                 azure_account_name: pageData.accountName,
                 azure_certificate_name: pageData.certificateName,
