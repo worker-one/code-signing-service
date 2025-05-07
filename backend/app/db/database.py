@@ -12,7 +12,7 @@ from sqlalchemy.engine import Engine
 SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL
 
 print(f"SQLALCHEMY_DATABASE_URL={SQLALCHEMY_DATABASE_URL}")
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+engine = create_engine(SQLALCHEMY_DATABASE_URL, pool_size=30, max_overflow=0)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Dependency to get DB session
