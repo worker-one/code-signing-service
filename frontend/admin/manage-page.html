@@ -57,16 +57,28 @@
                 <div class="form-section">
                     <h3>Azure Trusted Signing Account Credentials</h3>
                     <div class="form-group">
-                        <label for="editaccountName">Account URI</label>
-                        <input type="text" id="editaccountName" name="accountName" required>
+                        <label for="editAzureAccountName">Account Name</label>
+                        <input type="text" id="editAzureAccountName" name="azureAccountName" required>
                     </div>
                     <div class="form-group">
-                        <label for="editcertificateName">Account Key</label>
-                        <input type="password" id="editcertificateName" name="certificateName" required>
+                        <label for="editAzureCertificateName">Certificate Name</label>
+                        <input type="text" id="editAzureCertificateName" name="azureCertificateName" required>
                     </div>
                     <div class="form-group">
-                        <label for="editAdditionalCredentials">Additional Credentials (JSON)</label>
-                        <textarea id="editAdditionalCredentials" name="additionalCredentials" rows="4"></textarea>
+                        <label for="editAccountUri">Account URI</label>
+                        <input type="text" id="editAccountUri" name="accountUri" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editAzureTenantId">Tenant ID</label>
+                        <input type="text" id="editAzureTenantId" name="azureTenantId" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editAzureClientId">Client ID</label>
+                        <input type="text" id="editAzureClientId" name="azureClientId" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editAzureClientSecret">Client Secret</label>
+                        <input type="password" id="editAzureClientSecret" name="azureClientSecret" placeholder="Leave blank to keep current secret">
                     </div>
                 </div>
 

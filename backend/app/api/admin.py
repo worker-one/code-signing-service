@@ -67,14 +67,22 @@ def create_user(
             detail="Username already registered"
         )
     
+    # Fetch the role from the database
+    db_role = db.query(Role).filter(Role.name == user_data.role).first()
+    if not db_role:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid role: {user_data.role}. Must be 'admin' or 'user'."
+        )
+
     # Create new user
     hashed_password = get_password_hash(user_data.password)
     new_user = User(
         username=user_data.username,
-        email=user_data.username,
+        email=user_data.username, # Assuming username can serve as email or it's handled appropriately
         password_hash=hashed_password,
-        role=user_data.role,
-        role_id=1
+        role=db_role.name, # Set the role name
+        role_id=db_role.id  # Set the role_id from the fetched role
     )
     
     db.add(new_user)
@@ -229,7 +237,8 @@ def delete_page(
     db.delete(page)
     db.commit()
 
-    # Check if the user has no more pages or files, then delete the user
+    # Note: This logic deletes the user if they no longer have any pages or files.
+    # This is a significant side-effect and should be confirmed as desired behavior.
     if user and not user.pages and not user.files:
         db.delete(user)
         db.commit()

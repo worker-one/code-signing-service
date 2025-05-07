@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, Enum, DateTime, Text
+from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, DateTime, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -41,8 +41,8 @@ class User(Base):
     username = Column(String, unique=True, index=True, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     password_hash = Column(String, nullable=False)
-    role_id = Column(Integer, ForeignKey("roles.id"))
-    role = Column(String, default=ROLE_USER)
+    role_id = Column(Integer, ForeignKey("roles.id")) # Consider making this the sole source of truth for role, with User.role as a relationship/property.
+    role = Column(String, default=ROLE_USER) # Currently used for quick checks, ensure consistency with role_id.
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     is_superuser = Column(Boolean, default=False)
     
@@ -82,8 +82,8 @@ class File(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
     file_name = Column(String, nullable=False)
     file_path = Column(String, nullable=False)
-    status_id = Column(Integer, ForeignKey("file_statuses.id"))
-    status = Column(String, default=FILE_STATUS_PENDING)
+    status_id = Column(Integer, ForeignKey("file_statuses.id")) # Similar to User.role_id, consider making this the primary store for status.
+    status = Column(String, default=FILE_STATUS_PENDING) # String status for ease of use, ensure consistency with status_id.
     signed_file_path = Column(String, nullable=True)
     uploaded_at = Column(DateTime(timezone=True), server_default=func.now())
     signed_at = Column(DateTime(timezone=True), nullable=True)

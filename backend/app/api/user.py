@@ -9,15 +9,14 @@ from typing import List
 from pydantic import BaseModel
 
 from ..db.database import get_db
-from ..db.models import User, Page, File as FileModel, FileStatus
+from ..db.models import User, File as FileModel, FileStatus
 from ..core.security import get_current_user
 from ..core.config import settings
 
 router = APIRouter()
 
-import schedule
 import time
-from datetime import datetime, timedelta
+from datetime import datetime
 import os
 
 
@@ -55,7 +54,6 @@ from typing import Optional, List
 
 def sign_file(
     input_file_path: str, 
-    output_file_path: str, 
     tenant_id: str,
     client_id: str,
     client_secret: str,
@@ -65,11 +63,10 @@ def sign_file(
 ) -> None:
     """
     Sign a file using jsign with Azure credentials.
-    
+    The input file is signed in-place.
     
     Args:
         input_file_path: Path to the file to be signed
-        output_file_path: Path where the signed file will be saved
         tenant_id: Azure tenant ID
         client_id: Azure client ID
         client_secret: Azure client secret
@@ -101,8 +98,13 @@ async def upload_and_sign_file(
     user_dir = os.path.join(settings.UPLOAD_DIR, str(current_user.id))
     os.makedirs(user_dir, exist_ok=True)
     
-    # Read user from database
-    page = current_user.pages[0]
+    # Read user's page from database to get Azure credentials
+    if not current_user.pages:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="User does not have an associated signing page configuration."
+        )
+    page = current_user.pages[0] # Assumes one page per user as per admin logic
     
     print(page)
 
@@ -135,13 +137,9 @@ async def upload_and_sign_file(
         db_file.status = FileStatus.IN_PROGRESS
         db.commit()
 
-        # Define the signed file path
-        signed_path = os.path.join(user_dir, unique_filename)
-
-        # Sign the file
+        # Sign the file (in-place)
         sign_file(
             input_file_path=file_location, 
-            output_file_path="/root/code-signing-service/backend/" + signed_path, 
             tenant_id = page.azure_tenant_id,
             client_id = page.azure_client_id,
             client_secret = page.azure_client_secret,
