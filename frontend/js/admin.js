@@ -114,7 +114,7 @@ const AdminPanel = (() => {
                 title: page.username,
                 accountName: page.azure_account_name,
                 certificateName: page.azure_certificate_name,
-                createdAt: new Date().toISOString().split('T')[0], // Use current date as createdAt is not in API response
+                createdAt: page.created_at,
                 status: 'Active' // Status not in API response, defaulting to Active
             }));
             console.log('Transformed signing pages:', signingPages);
