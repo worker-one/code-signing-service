@@ -45,9 +45,15 @@ def get_access_token(tenant_id, client_id, client_secret):
 
 def run_command(command):
     try:
-        subprocess.run(command, check=True, shell=True)
+        # Capture both standard output and error
+        result = subprocess.run(command, check=True, shell=True, 
+                               stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                               text=True)
+        return result.stdout
     except subprocess.CalledProcessError as e:
-        print(f"An error occurred: {e}")
+        # Re-raise with the actual error message from jsign
+        error_message = e.stderr if e.stderr else str(e)
+        raise Exception(f"Command failed: {error_message}")
 
 
 from typing import Optional, List
