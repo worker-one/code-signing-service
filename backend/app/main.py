@@ -1,20 +1,20 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .api import auth, admin, user
-from .db.database import create_tables, init_roles, create_superuser
-from .db import models
 from .core.config import settings
 import schedule
 import os
 import time
 from datetime import datetime, timedelta
+import threading
 
 app = FastAPI(title=settings.PROJECT_NAME)
 
-def cleanup_old_files(upload_dir: str, days: int = 3):
+def cleanup_old_files(upload_dir: str, days: int = 1):  # Changed to 1 day to match frontend message
     """
     Deletes files older than a specified number of days from the upload directory.
     """
+    print(f"Running scheduled cleanup: removing files older than {days} day(s)")
     cutoff_date = datetime.now() - timedelta(days=days)
     for user_id_dir in os.listdir(upload_dir):
         user_dir_path = os.path.join(upload_dir, user_id_dir)
@@ -30,23 +30,21 @@ def cleanup_old_files(upload_dir: str, days: int = 3):
                     except OSError as e:
                         print(f"Error deleting {file_path}: {e}")
 
-
-def schedule_cleanup(upload_dir: str, days: int = 3):
+def run_scheduler():
     """
-    Schedules the file cleanup task to run every 2 minutes.
+    Runs the scheduler in a separate thread.
     """
-    schedule.every(2).minutes.do(cleanup_old_files, upload_dir=upload_dir, days=days)
     while True:
         schedule.run_pending()
-        time.sleep(1)
+        time.sleep(60)  # Check every minute
 
+# Schedule the cleanup task to run once every 24 hours
+schedule.every(24).hours.do(cleanup_old_files, upload_dir=settings.UPLOAD_DIR, days=1)
 
-import threading
-
-# Start the cleanup scheduler in a separate thread
-cleanup_thread = threading.Thread(target=schedule_cleanup, args=(settings.UPLOAD_DIR,))
-cleanup_thread.daemon = True  # Allow the program to exit even if the thread is running
-cleanup_thread.start()
+# Start the scheduler in a background thread
+scheduler_thread = threading.Thread(target=run_scheduler)
+scheduler_thread.daemon = True
+scheduler_thread.start()
 
 # Set up CORS
 app.add_middleware(
@@ -57,8 +55,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# # Mount static files
-# app.mount("/static", StaticFiles(directory="app/static"), name="static")
 app.include_router(auth.router, prefix="/api", tags=["authentication"])
 app.include_router(admin.router, prefix="/api/admin", tags=["admin"])
 app.include_router(user.router, prefix="/api/user", tags=["user"])
@@ -67,7 +63,7 @@ app.include_router(user.router, prefix="/api/user", tags=["user"])
 def read_root():
     return {"message": "Welcome to the Code Signing Service API"}
 
-
+# Uncomment these lines if you need to initialize the database
 # create_tables()
 # init_roles()
 # create_superuser()
