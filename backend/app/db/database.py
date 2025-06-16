@@ -2,10 +2,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from ..core.config import settings
 
-SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL
+SQLALCHEMY_DATABASE_URL = 'postgresql://code_sign_usr:KUyhgvuhisidijkm!=@31.59.58.9:5432/code_sign_db' #settings.DATABASE_URL
 
 print(f"SQLALCHEMY_DATABASE_URL={SQLALCHEMY_DATABASE_URL}")
-engine = create_engine(SQLALCHEMY_DATABASE_URL, pool_size=30, max_overflow=0)
+engine = create_engine(SQLALCHEMY_DATABASE_URL, pool_size=100, max_overflow=0)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Dependency to get DB session

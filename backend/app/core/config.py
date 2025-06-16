@@ -22,6 +22,8 @@ class Settings:
     # Superuser credentials
     SUPERUSER_USERNAME: str = os.getenv("SUPERUSER_USERNAME", "adm")
     SUPERUSER_PASSWORD: str = os.getenv("SUPERUSER_PASSWORD", "KUyhgvuhisidijkm!=")
+    
+    API_V1_STR: str = "/api/v1"
 
     class Config:
         case_sensitive = True

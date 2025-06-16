@@ -35,11 +35,27 @@
                             <th>Azure Account Name</th>
                             <th>Certificate Name</th>
                             <th>Created On</th>
+                            <th>Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="pagesTableBody">
-                        <!-- Page data will be inserted here -->
+                        <!-- Page data will be inserted here by JS, but update the JS to include an Edit button as a link -->
+                        <!-- Example row for clarity (JS will generate similar rows): -->
+                        <!--
+                        <tr>
+                            <td>username</td>
+                            <td>accountName</td>
+                            <td>certificateName</td>
+                            <td>createdAt</td>
+                            <td>status</td>
+                            <td>
+                                <a class="btn btn-sm btn-primary" href="/admin/edit_page.html?id=PAGE_ID">Edit</a>
+                                <button class="btn btn-sm btn-danger delete-page" data-id="PAGE_ID">Delete</button>
+                                <button class="btn btn-sm btn-secondary view-page" data-id="PAGE_ID">View</button>
+                            </td>
+                        </tr>
+                        -->
                     </tbody>
                 </table>
             </div>

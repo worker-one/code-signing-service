@@ -8,7 +8,7 @@ import time
 from datetime import datetime, timedelta
 import threading
 
-app = FastAPI(title=settings.PROJECT_NAME)
+app = FastAPI(title=settings.PROJECT_NAME, documentation_url="/api/v1/docs", redoc_url="/api/v1/redoc")
 
 def cleanup_old_files(upload_dir: str, days: int = 1):  # Changed to 1 day to match frontend message
     """
@@ -49,21 +49,22 @@ scheduler_thread.start()
 # Set up CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://78.153.149.221:8001"],  # For production, replace with specific origins
+    allow_origins=["http://31.59.58.9:8002", "http://31.59.58.9:8100", "http://31.59.58.9", "https://31.59.58.9","https://singspace.cloud"],  # Allow specific origin for development
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-app.include_router(auth.router, prefix="/api", tags=["authentication"])
-app.include_router(admin.router, prefix="/api/admin", tags=["admin"])
-app.include_router(user.router, prefix="/api/user", tags=["user"])
-
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to the Code Signing Service API"}
+app.include_router(auth.router, prefix="/api/v1", tags=["authentication"])
+app.include_router(admin.router, prefix="/api/v1/admin", tags=["admin"])
+app.include_router(user.router, prefix="/api/v1/user", tags=["user"])
 
 # Uncomment these lines if you need to initialize the database
 # create_tables()
 # init_roles()
 # create_superuser()
+
+# To serve with SSL, run uvicorn with:
+# uvicorn app.main:app --host 0.0.0.0 --port 8000 \
+#   --ssl-keyfile /etc/letsencrypt/live/signspace.cloud/privkey.pem \
+#   --ssl-certfile /etc/letsencrypt/live/signspace.cloud/fullchain.pem

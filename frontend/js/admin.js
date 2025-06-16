@@ -108,23 +108,23 @@ const AdminPanel = (() => {
             // Make real API call
             const response = await apiService.admin.getPages();
             console.log('API response:', response);
-            
+
             signingPages = response.map(page => {
                 // Format the date to show only year, month, and day
                 const createdDate = new Date(page.created_at);
                 const formattedDate = createdDate.toISOString().split('T')[0]; // Gets YYYY-MM-DD format
-                
+
                 return {
                     id: page.id,
                     title: page.username,
                     accountName: page.azure_account_name,
                     certificateName: page.azure_certificate_name,
                     createdAt: formattedDate,
-                    status: 'Active' // Status not in API response, defaulting to Active
+                    status: page.status || 'active' // Use API status, default to 'active'
                 };
             });
             console.log('Transformed signing pages:', signingPages);
-            
+
             renderSigningPages();
             console.log('Pages rendered successfully');
         } catch (error) {
@@ -147,22 +147,38 @@ const AdminPanel = (() => {
         
         if (signingPages.length === 0) {
             console.log('No signing pages to display');
-            pagesTableBody.innerHTML = '<tr><td colspan="5" class="text-center">No signing pages found</td></tr>';
+            pagesTableBody.innerHTML = '<tr><td colspan="6" class="text-center">No signing pages found</td></tr>';
             return;
         }
         
         console.log(`Rendering ${signingPages.length} signing pages...`);
         signingPages.forEach(page => {
             console.log('Rendering page:', page);
+
+            // Status label
+            let statusLabel = '';
+            if (page.status === 'active') {
+                statusLabel = '<span style="background:#ccc;color:#333;padding:2px 8px;border-radius:12px;font-size:0.9em;">Active</span>';
+            } else if (page.status === 'suspended') {
+                statusLabel = '<span style="background:#f44336;color:#fff;padding:2px 8px;border-radius:12px;font-size:0.9em;">Suspended</span>';
+            } else {
+                statusLabel = `<span style="background:#eee;color:#333;padding:2px 8px;border-radius:12px;font-size:0.9em;">${page.status}</span>`;
+            }
+
+            // Use a fixed width for all buttons for consistency
+            const buttonStyle = 'min-width: 70px; margin-right: 4px;';
+
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${page.title}</td>
                 <td>${page.accountName || 'N/A'}</td>
                 <td>${page.certificateName || 'N/A'}</td>
                 <td>${page.createdAt}</td>
+                <td>${statusLabel}</td>
                 <td>
-                    <button class="btn btn-sm btn-danger delete-page" data-id="${page.id}">Delete</button>
-                    <button class="btn btn-sm btn-secondary view-page" data-id="${page.id}">View</button>
+                    <button class="btn btn-sm btn-secondary view-page" data-id="${page.id}" style="${buttonStyle}">View</button>
+                    <button class="btn btn-sm btn-primary edit-page" data-id="${page.id}" style="${buttonStyle}">Edit</button>
+                    <button class="btn btn-sm btn-danger delete-page" data-id="${page.id}" style="${buttonStyle}">Delete</button>
                 </td>
             `;
             pagesTableBody.appendChild(row);
@@ -224,7 +240,11 @@ const AdminPanel = (() => {
             const apiPageData = {
                 page_url: pageData.title || pageData.pageAddress,
                 azure_account_name: pageData.accountName,
-                azure_certificate_name: pageData.certificateName
+                azure_certificate_name: pageData.certificateName,
+                account_uri: pageData.accountUri,
+                azure_tenant_id: pageData.tenantId,
+                azure_client_id: pageData.clientId,
+                azure_client_secret: pageData.clientSecret
             };
             
             await apiService.admin.updatePage(pageId, apiPageData);
@@ -268,16 +288,16 @@ const AdminPanel = (() => {
                 
                 const formData = new FormData(createPageForm);
                 const pageData = {
-                    tenantId: formData.get('tenantId'),
-                    clientId: formData.get('clientId'),
-                    clientSecret: formData.get('clientSecret'),
-                    accountName: formData.get('accountName'),
-                    certificateName: formData.get('certificateName'),
-                    accountUri: formData.get('accountUri'), // Get accountUri from form
-                    additionalCredentials: formData.get('additionalCredentials'),
-                    userUsername: formData.get('userUsername'),
-                    userPassword: formData.get('userPassword'),
-                    pageAddress: formData.get('pageAddress') || formData.get('accountName')
+                    tenantId: formData.get('tenantId')?.trim() || '',
+                    clientId: formData.get('clientId')?.trim() || '',
+                    clientSecret: formData.get('clientSecret')?.trim() || '',
+                    accountName: formData.get('accountName')?.trim() || '',
+                    certificateName: formData.get('certificateName')?.trim() || '',
+                    accountUri: formData.get('accountUri')?.trim() || '', // Get accountUri from form
+                    additionalCredentials: formData.get('additionalCredentials')?.trim() || '',
+                    userUsername: formData.get('userUsername')?.trim() || '',
+                    userPassword: formData.get('userPassword')?.trim() || '',
+                    pageAddress: (formData.get('pageAddress') || formData.get('accountName'))?.trim() || ''
                 };
                 
                 const success = await createSigningPage(pageData);
@@ -398,13 +418,19 @@ const AdminPanel = (() => {
                     
                     const formData = new FormData(editForm);
                     const pageData = {
-                        accountName: formData.get('accountName'),
-                        certificateName: formData.get('certificateName'),
+                        accountName: formData.get('azureAccountName'),
+                        certificateName: formData.get('azureCertificateName'),
+                        accountUri: formData.get('accountUri'),
+                        tenantId: formData.get('azureTenantId'),
+                        clientId: formData.get('azureClientId'),
+                        clientSecret: formData.get('azureClientSecret'),
                         additionalCredentials: formData.get('additionalCredentials'),
                         userUsername: formData.get('userUsername'),
                         userPassword: formData.get('userPassword'),
                         pageAddress: formData.get('pageAddress')
                     };
+
+                    console.log('Updating page with data:', pageData);
                     
                     const success = await updateSigningPage(pageId, pageData);
                     if (success) {
@@ -467,15 +493,20 @@ const AdminPanel = (() => {
     const openEditModal = async (pageId) => {
         try {
             const page = await apiService.admin.getPage(pageId);
-            
+
             document.getElementById('editPageId').value = pageId;
-            document.getElementById('editAccountName').value = page.azure_account_name || '';
-            document.getElementById('editcertificateName').value = ''; // For security, don't populate the key
-            document.getElementById('editAdditionalCredentials').value = page.additional_credentials || '';
+            document.getElementById('editAzureAccountName').value = page.azure_account_name || '';
+            document.getElementById('editAzureCertificateName').value = page.azure_certificate_name || '';
+            document.getElementById('editAccountUri').value = page.account_uri || '';
+            document.getElementById('editAzureTenantId').value = page.azure_tenant_id || '';
+            document.getElementById('editAzureClientId').value = page.azure_client_id || '';
+            // Do not populate client secret for security
+            document.getElementById('editAzureClientSecret').value = '';
             document.getElementById('editUserUsername').value = page.username || '';
-            // Don't populate password field for security
+            // Do not populate password for security
+            document.getElementById('editUserPassword').value = '';
             document.getElementById('editPageAddress').value = page.page_url || '';
-            
+
             const modal = document.getElementById('editPageModal');
             modal.style.display = 'block';
         } catch (error) {
@@ -488,23 +519,34 @@ const AdminPanel = (() => {
     const renderFilteredPages = (filteredPages) => {
         const pagesTableBody = document.getElementById('pagesTableBody');
         if (!pagesTableBody) return;
-        
+
         pagesTableBody.innerHTML = '';
-        
+
         if (filteredPages.length === 0) {
-            pagesTableBody.innerHTML = '<tr><td colspan="5" class="text-center">No matching pages found</td></tr>';
+            pagesTableBody.innerHTML = '<tr><td colspan="6" class="text-center">No matching pages found</td></tr>';
             return;
         }
-        
+
         filteredPages.forEach(page => {
+            // Status label
+            let statusLabel = '';
+            if (page.status === 'active') {
+                statusLabel = '<span style="background:#ccc;color:#333;padding:2px 8px;border-radius:12px;font-size:0.9em;">Active</span>';
+            } else if (page.status === 'suspended') {
+                statusLabel = '<span style="background:#f44336;color:#fff;padding:2px 8px;border-radius:12px;font-size:0.9em;">Suspended</span>';
+            } else {
+                statusLabel = `<span style="background:#eee;color:#333;padding:2px 8px;border-radius:12px;font-size:0.9em;">${page.status}</span>`;
+            }
+
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${page.title}</td>
                 <td>${page.userUsername || 'N/A'}</td>
                 <td>${page.accountName || 'N/A'}</td>
                 <td>${page.createdAt}</td>
+                <td>${statusLabel}</td>
                 <td>
-                    <button class="btn btn-sm btn-primary edit-page" data-id="${page.id}">Edit</button>
+                    <a class="btn btn-sm btn-primary" href="/admin/edit_page.html?id=${page.id}">Edit</a>
                     <button class="btn btn-sm btn-danger delete-page" data-id="${page.id}">Delete</button>
                     <button class="btn btn-sm btn-secondary view-page" data-id="${page.id}">View</button>
                 </td>

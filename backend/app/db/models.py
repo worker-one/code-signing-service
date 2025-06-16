@@ -24,6 +24,17 @@ class FileStatus(Base):
     FAILED = "failed"
     EXPIRED = "expired"
 
+
+class PageStatus(Base):
+    __tablename__ = "page_statuses"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, nullable=False)
+    
+    ACTIVE = "active"
+    INACTIVE = "suspended"
+
+
 # Constants for role and status values
 ROLE_ADMIN = "admin"
 ROLE_USER = "user"
@@ -65,8 +76,9 @@ class Page(Base):
     azure_client_secret = Column(Text, nullable=False)  # Should be encrypted
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
-    status = Column(String, default="active")
-    
+    status = Column(String, default=PageStatus.ACTIVE)
+    last_time_checked = Column(DateTime(timezone=True), nullable=True)
+
     user = relationship(
         "User", 
         back_populates="pages",

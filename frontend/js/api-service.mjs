@@ -5,7 +5,7 @@
 
 const ApiService = (() => {
     // Base URL for API endpoints
-    const API_BASE_URL = 'http://78.153.149.221:8000/api';
+    const API_BASE_URL = '/api/v1';
 
     // Get authentication token (assuming stored in localStorage)
     const getAuthToken = () => {

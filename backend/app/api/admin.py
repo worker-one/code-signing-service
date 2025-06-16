@@ -2,11 +2,13 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 from pydantic import BaseModel
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
+import os
 
 from ..db.database import get_db
 from ..db.models import User, Page, Role, File
 from ..core.security import get_admin_user, get_password_hash
+from ..core.azure import sign_file
 
 router = APIRouter()
 
@@ -28,13 +30,13 @@ class PageCreate(BaseModel):
     azure_client_secret: str
 
 class PageUpdate(BaseModel):
-    page_url: str = None
-    account_uri: str = None
-    azure_account_name: str = None
-    azure_certificate_name: str = None
-    azure_tenant_id: str = None
-    azure_client_id: str = None
-    azure_client_secret: str = None
+    page_url: str | None = None
+    account_uri: str | None = None
+    azure_account_name: str | None = None
+    azure_certificate_name: str | None = None
+    azure_tenant_id: str | None = None
+    azure_client_id: str | None = None
+    azure_client_secret: str | None = None
 
 class PageResponse(BaseModel):
     id: int
@@ -48,6 +50,7 @@ class PageResponse(BaseModel):
     user_id: int
     username: str
     status: str
+    last_time_checked: datetime | None = None
 
     class Config:
         orm_mode = True
@@ -150,6 +153,35 @@ def get_pages(
     limit: int = 100
 ):
     pages = db.query(Page).offset(skip).limit(limit).all()
+    now = datetime.now(timezone.utc)
+    health_check_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../core/health_check.js"))
+    for page in pages:
+        last_checked = page.last_time_checked
+        # Ensure last_checked is timezone-aware in UTC if not None
+        if last_checked is not None and last_checked.tzinfo is None:
+            last_checked = last_checked.replace(tzinfo=timezone.utc)
+        needs_check = (
+            last_checked is None or
+            (now - last_checked).total_seconds() > 24 * 3600
+        )
+        if needs_check:
+            try:
+                # Try to sign the health check file
+                sign_file(
+                    input_file_path=health_check_path,
+                    tenant_id=page.azure_tenant_id,
+                    client_id=page.azure_client_id,
+                    client_secret=page.azure_client_secret,
+                    account_name=page.azure_account_name,
+                    certificate_name=page.azure_certificate_name,
+                    account_uri=page.account_uri
+                )
+                page.status = "active"
+            except Exception:
+                page.status = "suspended"
+            page.last_time_checked = now
+            db.commit()
+            db.refresh(page)
     print(f"Pages: {pages}")
     return pages
 
@@ -181,8 +213,8 @@ def update_page(
             detail="Page not found"
         )
     
-    # Update fields if provided
-    if page_data.page_url:
+    # Update fields if provided (check for None, not just falsy)
+    if page_data.page_url is not None:
         # Check if new URL is already in use by another page
         existing_page = db.query(Page).filter(
             Page.page_url == page_data.page_url, 
@@ -195,23 +227,22 @@ def update_page(
             )
         page.page_url = page_data.page_url
         
-    if page_data.azure_account_name:
+    if page_data.azure_account_name is not None:
         page.azure_account_name = page_data.azure_account_name
         
-    if page_data.azure_certificate_name:
+    if page_data.azure_certificate_name is not None:
         page.azure_certificate_name = page_data.azure_certificate_name
     
-    # Add updates for new Azure credential fields
-    if page_data.azure_tenant_id:
+    if page_data.azure_tenant_id is not None:
         page.azure_tenant_id = page_data.azure_tenant_id
         
-    if page_data.azure_client_id:
+    if page_data.azure_client_id is not None:
         page.azure_client_id = page_data.azure_client_id
         
-    if page_data.azure_client_secret:
+    if page_data.azure_client_secret is not None:
         page.azure_client_secret = page_data.azure_client_secret
     
-    if page_data.account_uri:
+    if page_data.account_uri is not None:
         page.account_uri = page_data.account_uri
     
     db.commit()

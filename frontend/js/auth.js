@@ -36,16 +36,14 @@ const Auth = (() => {
             const formData = new URLSearchParams();
             formData.append('username', username);
             formData.append('password', password);
-            
-            // Make an actual API call to the backend
-            const response = await fetch('http://78.153.149.221:8000/api/token', {
+            // Make an actual API call to the backend (same domain)
+            const response = await fetch('api/v1/token', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
                 body: formData
             });
-            
             // Parse the response
             const data = await response.json();
             
@@ -81,9 +79,9 @@ const Auth = (() => {
     const getUserInfo = async (token) => {
         try {
             // Replace process.env.API_URL with a direct reference or window variable
-            const API_URL = window.API_URL || 'http://78.153.149.221:8000';
-            console.log('Sending request to:', `${API_URL}/api/users/me`);
-            const response = await fetch(`${API_URL}/api/users/me`, {
+            // const API_URL = window.API_URL || 'http://31.59.58.9:8000';
+            console.log('Sending request to:', `/api/v1/users/me`);
+            const response = await fetch(`/api/v1/users/me`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
